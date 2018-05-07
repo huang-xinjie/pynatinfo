@@ -7,7 +7,7 @@ HOST2, s2p1 = '123.207.161.147', 6201
 BUFFSIZE = 1024
 
 # get lan ip
-def getIp():
+def getLanIp():
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(('8.8.8.8', 80))
@@ -16,14 +16,15 @@ def getIp():
         s.close()
     return ip
 
-def getNatType():
-    ip = getIp()
+def getNatInfo():
+    ip = getLanIp()
     dc1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     dc2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     dc1.sendto("Hi".encode(), (HOST1, s1p1))
     s1Data1, _ = dc1.recvfrom(BUFFSIZE)
+    print('public ip: ', s1Data1.decode().split("'")[1])
     # 所获得ip与返回ip一致 则 处于公网
-    if s1Data1.decode().split(",")[1] == ip:
+    if s1Data1.decode().split("'")[1] == ip:
         return 'NoNat'
     # 同一公网ip, 相同端口, 不同会话   ## 不同 则 对称型
     dc2.sendto("Hi".encode(), (HOST1, s1p1))
@@ -43,4 +44,4 @@ def getNatType():
     else:
         return 'FCNat'
 
-print(getNatType())
+print('Nat Type: ', getNatInfo())
