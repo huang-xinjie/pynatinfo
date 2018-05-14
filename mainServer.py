@@ -2,6 +2,7 @@ import socket
 import threading
 
 HOST, detectPort1, detectPort2 = '0.0.0.0', 15002, 12553
+HOST2, s2p1 = '139.199.194.49', 16201
 BUFFSIZE = 1024
 
 
@@ -13,24 +14,24 @@ class detectNatType():
         self.ds1.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.ds2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.ds1.bind((HOST, detectPort1))
-        self.ds2.bind((HOST, detectPort2))
-        # works in 2 thread
-        threading.Thread(target=self.port1Run).start()
-        threading.Thread(target=self.port2Run).start()
-    
+        self.ds2.bind((HOST, detectPort2))    
 
-    def port1Run(self):
+    def run(self):
         # return client's public address
         while True:
-            _, addr = self.ds1.recvfrom(BUFFSIZE)
-            print('detectPort1: %s %s' % (_.decode(), str(addr)))
-            self.ds1.sendto(str(addr).encode(), addr)
-
-    def port2Run(self):
-        while True:
-            _, addr = self.ds2.recvfrom(BUFFSIZE)
-            print('detectPort2: %s %s' % (_.decode(), str(addr)))
-            self.ds2.sendto(str(addr).encode(), addr)
+            try:
+                _, addr = self.ds1.recvfrom(BUFFSIZE)
+                data = _.decode()
+                print('detectPort1: %s from %s' % (data, str(addr)))
+                if data == 'FC detect':
+                    self.ds1.sendto(str(addr).encode(), (HOST2, s2p1))
+                elif data == 'ARC detect':
+                    self.ds2.sendto(str(addr).encode(), addr)
+                else:
+                    self.ds1.sendto(str(addr).encode(), addr)
+            except Exception as e:
+                print("Error: ", str(e))
 
 if __name__ == '__main__':
-    detectNatType()
+    s1 = detectNatType()
+    s1.run()
