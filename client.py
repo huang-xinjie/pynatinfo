@@ -52,8 +52,6 @@ def getNatInfo():
 
     
     print('Nat Type: ', Type)
-    print('public ip: ', s1Data1.decode().split("'")[1])
-
-
+    print('public ip: ', ip)
 
 getNatInfo()
