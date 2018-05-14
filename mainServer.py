@@ -20,7 +20,7 @@ class detectNatType():
     
 
     def port1Run(self):
-        # return client's public ip
+        # return client's public address
         while True:
             _, addr = self.ds1.recvfrom(BUFFSIZE)
             print('detectPort1: %s %s' % (_.decode(), str(addr)))
