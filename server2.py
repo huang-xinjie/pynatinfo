@@ -12,7 +12,6 @@ class detectNatType():
         self.ds1.bind((HOST, s2p1))
     
     def run(self):
-        # return client's public address
         while True:
             try:
                 Data, _ = self.ds1.recvfrom(BUFFSIZE)
@@ -22,6 +21,7 @@ class detectNatType():
                     clientAddr = (clientAddrData[1], int(clientAddrData[2][2:-1]))
                     self.ds1.sendto(Data, clientAddr)
                 else:
+                    # return client's public address
                     self.ds1.sendto(str(_).encode(), _)
             except Exception as e:
                 print("Error: ", str(e))

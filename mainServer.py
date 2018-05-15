@@ -22,7 +22,7 @@ class detectNatType():
             try:
                 _, addr = self.ds1.recvfrom(BUFFSIZE)
                 data = _.decode()
-                print('detectPort1: %s from %s' % (data, str(addr)))
+                print('Port1: %s from %s' % (data, str(addr)))
                 if data == 'FC detect':
                     self.ds1.sendto(str(addr).encode(), (HOST2, s2p1))
                 elif data == 'ARC detect':

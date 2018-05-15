@@ -7,7 +7,7 @@ HOST2, s2p1 = '139.199.194.49', 16201
 BUFFSIZE = 1024
 
 def getNatInfo():
-    Type, ip = '', ''
+    Type, ip, port = '', '', ''
     dc1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     dc1.settimeout(0.5)     # 500ms
     # FC detect
@@ -18,7 +18,7 @@ def getNatInfo():
             _, addr = dc1.recvfrom(BUFFSIZE)
             if addr == (HOST2, s2p1):
                 Type = 'FC Nat'
-                ip = _.decode().split("'")[1]
+                _, ip, port = _.decode().split("'")
         except socket.timeout:
             retry += 1   # Not FC Nat
         # ARC detect
@@ -29,7 +29,7 @@ def getNatInfo():
             _, addr = dc1.recvfrom(BUFFSIZE)
             if addr == (HOST1, s1p2):
                 Type = 'ARC Nat'
-                ip = _.decode().split("'")[1]
+                _, ip, port = _.decode().split("'")
         except socket.timeout:
             retry += 1  # Not ARC Nat
     # Sym detect
@@ -44,14 +44,14 @@ def getNatInfo():
                 Type = 'Sym Nat'
             else:
                 Type = 'PRC Nat'
-            ip = s1Data1.decode().split("'")[1]
+            _, ip, port = s1Data1.decode().split("'")
         except socket.timeout:
             if retry >= 2:
                 print('Timeout: something error!')
             retry += 1
-
     
     print('Nat Type: ', Type)
-    print('public ip: ', ip)
+    print('Public IP: ', ip)
+    print('Public Port: ', port[2:-1])
 
 getNatInfo()
